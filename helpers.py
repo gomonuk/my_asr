@@ -15,14 +15,14 @@ def split_channel(intput_file, output_file=None):
 
     file_extension = "." + intput_file.split(".")[-1]
     output_file = output_file.split(file_extension)[0] + "_splitted_{}" + file_extension
-    ffmpeg.input(intput_file).output(output_file.format("0"), map_channel="0.0.0").run()
-    ffmpeg.input(intput_file).output(output_file.format("1"), map_channel="0.0.1").run()
+    ffmpeg.input(intput_file).output(output_file.format("0"), map_channel="0.0.0").overwrite_output().run()
+    ffmpeg.input(intput_file).output(output_file.format("1"), map_channel="0.0.1").overwrite_output().run()
     return output_file.format("0"), output_file.format("1")
 
 
-def split_by_silence(file):
+def split_by_silence(file ):
     fs, x = aIO.readAudioFile(file)
-    segments = aS.silenceRemoval(x, fs, 0.020, 0.020, smoothWindow=1.0, weight=0.3, plot=False)
+    segments = aS.silenceRemoval(x, fs, 0.05, 0.05, smoothWindow=1.0, weight=0.3, plot=False)
     audio_segment = AudioSegment.from_mp3(file)
     out = []
     for segment in segments:
@@ -32,9 +32,11 @@ def split_by_silence(file):
         extract = audio_segment[start_time:end_time]
         # Saving
         # extract.export(file.split("/")[-1].split(".")[0] + segment_name + ".wav", format="wav")
-        filename = file.split("/")[-1].split(".")[0] + segment_name + ".wav"
-        extract.export(filename, format="wav")
+        filename = "/home/user/tmp/tmp" + file.split("/")[-1].split(".")[0] + segment_name + ".wav"
+        print(filename)
+        filename = extract.export(filename, format="wav", parameters="-ar 8000")
         out.append(filename)
+    print("split_by_silence")
     return out
 
 if __name__ == "__main__":

@@ -4,7 +4,7 @@ from websocket import create_connection
 
 import sys
 
-inf = "/home/user/fmpeg_out.wav"
+inf = "/home/user/datasets/realweb_okkervil/out1.wav"
 if len(sys.argv) > 1:
     inf = sys.argv[1]
 
@@ -12,6 +12,9 @@ if len(sys.argv) > 1:
 def process_chunk(ws, buf):
     ws.send_binary(buf)
     res = ws.recv()
+
+
+
     print(res)
 
 
@@ -28,7 +31,7 @@ def test_stream():
     infile = open(inf, "rb")
 
     while True:
-        buf = infile.read(8000)
+        buf = infile.read(100)
         if not buf:
             break
         process_chunk(ws, buf)
